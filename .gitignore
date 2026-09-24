@@ -1,0 +1,13 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Obsidian: estado da interface é por máquina; configurações e plugins podem ser versionados
+.obsidian/workspace*.json
+.obsidian/cache
+.trash/
+
+# Python (scripts das skills)
+.venv/
+__pycache__/
+*.ipynb_checkpoints/

@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://puc-behring/pkb/prisma-flow.schema.json",
+  "title": "PRISMA 2020 flow data",
+  "description": "Objeto único com tudo que a revisão sistemática levanta e que entra no diagrama de fluxo PRISMA 2020. Fonte da verdade: as skills do PRISMA escrevem aqui; o gerador do diagrama só lê. Nomes de campo seguem o vocabulário do PRISMA 2020 (Page et al. 2021) e o template CSV do pacote R PRISMA2020 (Haddaway et al. 2022).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "review", "identification", "screening", "retrieval", "eligibility", "included"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "kind", "sources"],
+      "properties": {
+        "title": { "type": "string" },
+        "kind": { "enum": ["new", "updated"], "description": "new = revisão nova; updated = atualização de revisão existente (adiciona a coluna 'Previous studies')." },
+        "sources": { "enum": ["databases_registers", "databases_registers_other"], "description": "Define qual dos 4 templates oficiais se aplica (com ou sem a coluna 'via other methods')." },
+        "protocol_note": { "type": "string", "description": "Caminho da nota de protocolo na base, ex. '01 Projects/Revisão X/Protocolo.md'." },
+        "search_date": { "type": "string", "format": "date" },
+        "language": { "enum": ["pt-BR", "en"], "default": "en", "description": "Idioma dos rótulos do diagrama. Os dados são os mesmos." },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "generated_by": { "type": "string", "description": "Skill/ferramenta que consolidou os números." }
+      }
+    },
+
+    "previous": {
+      "type": "object",
+      "description": "Só quando review.kind = updated.",
+      "additionalProperties": false,
+      "required": ["studies", "reports"],
+      "properties": {
+        "studies": { "$ref": "#/$defs/count" },
+        "reports": { "$ref": "#/$defs/count" }
+      }
+    },
+
+    "identification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["databases"],
+      "properties": {
+        "databases": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/source" },
+          "description": "Uma entrada por base (PubMed, Scopus, OpenAlex, Semantic Scholar, arXiv, Crossref...). O diagrama mostra o total e lista cada uma."
+        },
+        "registers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source" },
+          "description": "Registros de ensaios/protocolos (ClinicalTrials.gov, PROSPERO, OSF...). Vazio se não houve."
+        },
+        "other": {
+          "type": "object",
+          "description": "Só quando review.sources = databases_registers_other.",
+          "additionalProperties": false,
+          "properties": {
+            "websites": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+            "organisations": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+            "citation_searching": { "type": "array", "items": { "$ref": "#/$defs/source" }, "description": "Backward/forward snowballing. Uma entrada por rodada ou por semente, como preferir." }
+          }
+        }
+      }
+    },
+
+    "screening": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["removed_before_screening", "records_screened", "records_excluded"],
+      "properties": {
+        "removed_before_screening": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["duplicates"],
+          "properties": {
+            "duplicates": { "$ref": "#/$defs/count", "description": "Dedup por DOI e título normalizado." },
+            "automation_tools": { "$ref": "#/$defs/count", "description": "Marcados como inelegíveis por ferramenta automática (classificador, filtro de idioma/ano aplicado por script). Se o agente aplicou critérios objetivos antes da triagem humana, conta aqui." },
+            "other_reasons": { "$ref": "#/$defs/reasoned_count" }
+          }
+        },
+        "records_screened": { "$ref": "#/$defs/count", "description": "Fase 1 (título e resumo). Deve ser igual a total identificado em bases+registros menos removidos antes da triagem." },
+        "records_excluded": { "$ref": "#/$defs/count", "description": "Excluídos na fase 1. O PRISMA não pede motivos aqui, mas as skills registram por artigo no CSV; o diagrama mostra só o total." }
+      }
+    },
+
+    "retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["databases_registers"],
+      "properties": {
+        "databases_registers": { "$ref": "#/$defs/retrieval_arm" },
+        "other": { "$ref": "#/$defs/retrieval_arm", "description": "Só quando há 'other methods'. Nessa coluna não há triagem de título/resumo: vai direto de identificado para 'sought for retrieval'." }
+      }
+    },
+
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["databases_registers"],
+      "properties": {
+        "databases_registers": { "$ref": "#/$defs/eligibility_arm" },
+        "other": { "$ref": "#/$defs/eligibility_arm" }
+      }
+    },
+
+    "included": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["new_studies", "new_reports"],
+      "properties": {
+        "new_studies": { "$ref": "#/$defs/count", "description": "Estudos (unidade de análise). Um estudo pode ter vários relatos." },
+        "new_reports": { "$ref": "#/$defs/count", "description": "Relatos/artigos dos estudos incluídos." },
+        "total_studies": { "$ref": "#/$defs/count", "description": "Só em revisão atualizada: previous.studies + new_studies." },
+        "total_reports": { "$ref": "#/$defs/count", "description": "Só em revisão atualizada." },
+        "meta_analysis_studies": { "$ref": "#/$defs/count", "description": "Opcional: estudos que entraram na síntese quantitativa." },
+        "meta_analysis_reports": { "$ref": "#/$defs/count" }
+      }
+    },
+
+    "audit": {
+      "type": "object",
+      "description": "Não entra no diagrama; entra na nota de métodos e no log. Mantido aqui para o diagrama e o texto nascerem do mesmo objeto.",
+      "additionalProperties": false,
+      "properties": {
+        "per_record_csv": { "type": "string", "description": "Caminho do CSV com uma linha por artigo (decisão, justificativa, respostas)." },
+        "sample_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "stage": { "enum": ["screening", "eligibility"] },
+            "sample_size": { "type": "integer", "minimum": 0 },
+            "agreement": { "type": "number", "minimum": 0, "maximum": 1 },
+            "kappa": { "type": "number", "minimum": -1, "maximum": 1 },
+            "date": { "type": "string", "format": "date" }
+          }
+        },
+        "run_id": { "type": "string", "description": "Identificador da execução do pipeline, para reprodutibilidade quando os critérios mudam." }
+      }
+    }
+  },
+
+  "$defs": {
+    "count": { "type": "integer", "minimum": 0 },
+
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "n"],
+      "properties": {
+        "name": { "type": "string", "description": "Rótulo como aparece no diagrama: 'PubMed', 'OpenAlex'." },
+        "n": { "$ref": "#/$defs/count" },
+        "query": { "type": "string", "description": "Query exata usada. Não entra no diagrama; entra na nota de métodos." },
+        "date": { "type": "string", "format": "date" },
+        "filters": { "type": "string" }
+      }
+    },
+
+    "reason": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "n"],
+      "properties": {
+        "reason": { "type": "string" },
+        "n": { "$ref": "#/$defs/count" },
+        "criterion_id": { "type": "string", "description": "Id do critério de exclusão no protocolo (ex. 'E3'), para rastrear até a nota de protocolo." }
+      }
+    },
+
+    "reasoned_count": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["n"],
+      "properties": {
+        "n": { "$ref": "#/$defs/count" },
+        "reasons": { "type": "array", "items": { "$ref": "#/$defs/reason" } }
+      }
+    },
+
+    "retrieval_arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reports_sought", "reports_not_retrieved"],
+      "properties": {
+        "reports_sought": { "$ref": "#/$defs/count" },
+        "reports_not_retrieved": { "$ref": "#/$defs/reasoned_count", "description": "Motivos opcionais (paywall, sem texto completo, autor não respondeu)." }
+      }
+    },
+
+    "eligibility_arm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reports_assessed", "reports_excluded"],
+      "properties": {
+        "reports_assessed": { "$ref": "#/$defs/count", "description": "Fase 2 (texto completo)." },
+        "reports_excluded": {
+          "$ref": "#/$defs/reasoned_count",
+          "description": "Aqui o PRISMA exige os motivos com contagens. A soma de reasons[].n deve ser igual a n."
+        }
+      }
+    }
+  }
+}

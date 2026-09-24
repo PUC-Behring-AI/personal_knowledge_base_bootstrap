@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "review": {
+    "title": "Uso de LLMs na triagem de revisões sistemáticas",
+    "kind": "new",
+    "sources": "databases_registers_other",
+    "protocol_note": "01 Projects/Revisão LLM triagem/Protocolo.md",
+    "search_date": "2026-09-10",
+    "language": "pt-BR",
+    "generated_at": "2026-09-24T14:00:00-03:00",
+    "generated_by": "skill prisma-consolidate"
+  },
+  "identification": {
+    "databases": [
+      { "name": "OpenAlex", "n": 412, "query": "\"large language model\" AND \"systematic review\" AND screening", "date": "2026-09-10" },
+      { "name": "Semantic Scholar", "n": 298, "query": "large language model systematic review screening", "date": "2026-09-10" },
+      { "name": "arXiv", "n": 87, "query": "ti:\"language model\" AND abs:\"systematic review\"", "date": "2026-09-10" },
+      { "name": "Crossref", "n": 143, "query": "large language model systematic review screening", "date": "2026-09-10" }
+    ],
+    "registers": [
+      { "name": "PROSPERO", "n": 9, "date": "2026-09-10" }
+    ],
+    "other": {
+      "citation_searching": [ { "name": "Backward snowballing (5 sementes)", "n": 31 } ],
+      "websites": [ { "name": "Cochrane Community", "n": 4 } ]
+    }
+  },
+  "screening": {
+    "removed_before_screening": {
+      "duplicates": 276,
+      "automation_tools": 58,
+      "other_reasons": { "n": 12, "reasons": [ { "reason": "Sem resumo disponível", "n": 12 } ] }
+    },
+    "records_screened": 603,
+    "records_excluded": 521
+  },
+  "retrieval": {
+    "databases_registers": { "reports_sought": 82, "reports_not_retrieved": { "n": 6, "reasons": [ { "reason": "Texto completo indisponível", "n": 6 } ] } },
+    "other": { "reports_sought": 35, "reports_not_retrieved": { "n": 2 } }
+  },
+  "eligibility": {
+    "databases_registers": {
+      "reports_assessed": 76,
+      "reports_excluded": {
+        "n": 49,
+        "reasons": [
+          { "reason": "Não avalia triagem (só extração de dados)", "n": 21, "criterion_id": "E1" },
+          { "reason": "Sem comparação com humano", "n": 17, "criterion_id": "E2" },
+          { "reason": "Preprint duplicado de artigo incluído", "n": 6, "criterion_id": "E4" },
+          { "reason": "Idioma fora do protocolo", "n": 5, "criterion_id": "E5" }
+        ]
+      }
+    },
+    "other": {
+      "reports_assessed": 33,
+      "reports_excluded": { "n": 27, "reasons": [ { "reason": "Não avalia triagem", "n": 19, "criterion_id": "E1" }, { "reason": "Sem comparação com humano", "n": 8, "criterion_id": "E2" } ] }
+    }
+  },
+  "included": {
+    "new_studies": 30,
+    "new_reports": 33
+  },
+  "audit": {
+    "per_record_csv": "01 Projects/Revisão LLM triagem/triagem.csv",
+    "sample_check": { "stage": "screening", "sample_size": 60, "agreement": 0.93, "kappa": 0.81, "date": "2026-09-18" },
+    "run_id": "2026-09-24-r1"
+  }
+}
