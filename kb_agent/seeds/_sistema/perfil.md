@@ -3,6 +3,7 @@
 - Nome: 
 - Idioma: 
 - Sistema operacional: 
+- Máquina: propria | compartilhada
 - Propósito principal da base: 
 - Inferência: local | nuvem-privada | terceiros
 - Dados: maquina | repo-privado | servico
@@ -11,7 +12,7 @@
 - Ferramentas em uso: 
 - Estilo de comunicação preferido: 
 - Fuso horário: 
-- Instalação das skills: link | cópia
+- Instalação das skills: link | junction | cópia
 - Skills do Obsidian: local | global | não
 
 ## Preferências do assistente

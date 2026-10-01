@@ -12,7 +12,14 @@ Verificação (o assistente faz no setup e no healthcheck):
 ls .claude/skills/*/SKILL.md
 ```
 
-Se o comando falha (Windows sem WSL, ou clone que não preservou o link), instalar por cópia:
+No Windows nativo o git costuma materializar o link como um arquivo de texto. A solução, sem admin, é uma *junction* (o `SETUP.md`, passo 4, tem os comandos e como esconder a diferença do git):
+
+```powershell
+Remove-Item -Force .claude\skills
+New-Item -ItemType Junction -Path .claude\skills -Target (Resolve-Path kb_agent\skills)
+```
+
+Se nem isso funcionar, instalar por cópia:
 
 ```bash
 rm -rf .claude/skills && cp -r kb_agent/skills .claude/skills
