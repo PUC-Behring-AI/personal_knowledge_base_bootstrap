@@ -181,7 +181,7 @@ A base não deve terminar o setup vazia. Peça ao usuário **uma** coisa para en
 
 Faça a operação **Ingerir** (`AGENTS.md`, seção 5) com ele, em voz alta: mostre a nota criada, o frontmatter com `origem`, a entrada no `index.md` e a linha no `log.md`. Esse é o modelo de tudo que vem depois. Faça um commit com a nota.
 
-Se o usuário está seguindo a aula, o primeiro ingest é o survey da turma e o notebook de análise: crie a nota-resumo, guarde o notebook junto, e ao reportar correlações lembre que com amostra pequena elas aparecem por acaso. Pergunte quais ele esperaria antes de ver os dados.
+Se o usuário está seguindo a aula, o primeiro ingest é o survey da turma e o notebook de análise, que estão em `kb_agent/aula/`. **Copie** (não mova) o CSV e o notebook para `03 Resources/Aulas/2026-09-24 - Survey PKB com agentes/`, peça ao usuário para preencher a célula de hipóteses e rodar o notebook, e crie a nota-resumo na mesma pasta, seguindo a última seção do notebook. Ao reportar correlações, lembre que com amostra pequena elas aparecem por acaso; a seção 6 do notebook mostra isso com a cor favorita.
 
 *Verificação:* a nota existe, está no `index.md`, há linha `ingest` no `log.md` e o commit foi feito.
 
